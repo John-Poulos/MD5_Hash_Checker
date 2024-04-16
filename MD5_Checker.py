@@ -1,48 +1,48 @@
-import sys
+from flask import Flask, request, jsonify
 import hashlib
 import os
 
-def calculate_md5(file_name):
-    try:
-        if not os.path.isfile(file_name):
-            raise FileNotFoundError("The file does not exist.")
-        
-        hash_md5 = hashlib.md5()
-        with open(file_name, "rb") as f:
-            for chunk in iter(lambda: f.read(4096), b""):
-                hash_md5.update(chunk)
-        return hash_md5.hexdigest()
+app = Flask(__name__)
+
+def calculate_md5(file):
+    hash_md5 = hashlib.md5()
+    with file as f:
+        for chunk in iter(lambda: f.read(4096), b""):
+            hash_md5.update(chunk)
+    return hash_md5.hexdigest()
+
+@app.route('/md5', methods=['POST'])
+def get_md5():
+    if 'file' not in request.files:
+        return jsonify({"error": "No file provided."}), 400
+    file = request.files['file']
+    if file.filename == '':
+        return jsonify({"error": "No selected file."}), 400
     
-    except PermissionError:
-        print("Permission denied to read the file.")
-        sys.exit(1)
-    except FileNotFoundError as e:
-        print(e)
-        sys.exit(1)
+    try:
+        md5_hash = calculate_md5(file)
+        return jsonify({"md5": md5_hash})
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
 
-def main():
-    if len(sys.argv) < 2 or len(sys.argv) > 3:
-        print("Usage: python md5_checker.py  []")
-        sys.exit(1)
-
-    file_name = sys.argv[1]
-    if len(file_name) > 256:
-        print("Filename too long. Please provide a valid filename.")
-        sys.exit(1)
-
-    md5_hash = calculate_md5(file_name)
-
-    if len(sys.argv) == 3:
-        user_hash = sys.argv[2]
-        if len(user_hash) != 32:
-            print("Invalid hash length. MD5 hash should be 32 characters long.")
-            sys.exit(1)
+@app.route('/authenticate', methods=['POST'])
+def authenticate():
+    if 'file' not in request.files or 'hash' not in request.form:
+        return jsonify({"error": "Both file and hash are required."}), 400
+    file = request.files['file']
+    user_hash = request.form['hash']
+    
+    if len(user_hash) != 32:
+        return jsonify({"error": "Invalid hash length. MD5 hash should be 32 characters long."}), 400
+    
+    try:
+        md5_hash = calculate_md5(file)
         if md5_hash == user_hash:
-            print("Authenticated")
+            return jsonify({"result": "Authenticated"})
         else:
-            print("Failed to Match!")
-
-    print(f"File's MD5 Hash: {md5_hash}")
+            return jsonify({"result": "Failed to Match!"})
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
 
 if __name__ == "__main__":
-    main()
+    app.run(debug=True)

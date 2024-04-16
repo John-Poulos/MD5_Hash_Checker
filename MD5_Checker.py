@@ -44,5 +44,9 @@ def authenticate():
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
+@app.route('/')
+def index():
+    return 'Welcome to the MD5 Hash Calculator!'
+
 if __name__ == "__main__":
     app.run(debug=False)

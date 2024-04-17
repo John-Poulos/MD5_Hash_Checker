@@ -1,5 +1,5 @@
 {
-    "name": "MD5-Checker",
+    "name": "app",
     "version": "1.0.0",
     "scripts": {
       "build": "pipenv install && pipenv run python app.py"

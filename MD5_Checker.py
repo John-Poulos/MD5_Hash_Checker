@@ -1,8 +1,13 @@
 from flask import Flask, request, jsonify
+from flask_sqlalchemy import SQLAlchemy
 import hashlib
 import os
 
+
 app = Flask(__name__)
+
+# Initialize DB
+db = SQLAlchemy(app)
 
 def calculate_md5(file):
     hash_md5 = hashlib.md5()
@@ -48,5 +53,12 @@ def authenticate():
 def index():
     return 'Welcome to the MD5 Hash Calculator!'
 
+# Check if the app is running on Vercel or not
 if __name__ == "__main__":
-    app.run(debug=False)
+    # If the app is running on Vercel (production), 
+    # use the Vercel server.js file to start the server
+    from server import startServer
+    startServer()
+else:
+    # If the app is running locally, use Flask's app.run()
+    app.run(debug=True)

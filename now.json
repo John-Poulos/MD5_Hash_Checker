@@ -1,0 +1,11 @@
+{
+    "builds": [
+      {
+        "src": "MD5_Checker.py",
+        "use": "@vercel/python"
+      }
+    ],
+    "routes": [
+      { "src": "/.*", "dest": "/MD5_Checker.py" }
+    ]
+  }

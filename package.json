@@ -7,7 +7,7 @@
     "dependencies": {
       "express": "^4.17.1",
       "flask": "*",
-      "pipenv": "^2020.11.15",
-      "werkzeug": "^1.0.1"
+      "pipenv": "*",
+      "werkzeug": "*"
     }
 }

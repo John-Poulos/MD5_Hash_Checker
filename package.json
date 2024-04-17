@@ -1,0 +1,13 @@
+{
+    "name": "MD5-Checker",
+    "version": "1.0.0",
+    "scripts": {
+      "build": "pipenv install && pipenv run python app.py"
+    },
+    "dependencies": {
+      "express": "^4.17.1",
+      "flask": "^1.1.2",
+      "pipenv": "^2020.11.15",
+      "werkzeug": "^1.0.1"
+    }
+}

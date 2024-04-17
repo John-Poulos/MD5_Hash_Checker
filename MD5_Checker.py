@@ -1,8 +1,7 @@
 from flask import Flask, request, jsonify
-from flask_sqlalchemy import SQLAlchemy
 import hashlib
 import os
-
+from flask_sqlalchemy import SQLAlchemy
 
 app = Flask(__name__)
 
@@ -53,12 +52,8 @@ def authenticate():
 def index():
     return 'Welcome to the MD5 Hash Calculator!'
 
-# Check if the app is running on Vercel or not
+# Check if the app is running on Netlify or not
 if __name__ == "__main__":
-    # If the app is running on Vercel (production), 
-    # use the Vercel server.js file to start the server
-    from server import startServer
-    startServer()
-else:
     # If the app is running locally, use Flask's app.run()
-    app.run(debug=True)
+    port = int(os.environ.get("PORT", 5000))
+    app.run(host='0.0.0.0', port=port)
